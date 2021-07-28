@@ -12,17 +12,23 @@ app = Flask(__name__)
 @app.route('/rate/',methods=['GET','POST'])
 def rate():
     data = request.get_json()
-    latitude = data["latitude"]
-    longtiude = data["longtiude"]
-    result = extractData(CURRENT_FEATURES,latitude,longtiude)
-    result_float = []
-    for item in list(result.values()):
-        result_float.append(float(item))
-    test_values = torch.tensor([result_float])
-    rate = torch.argmax(
-    torch.softmax((test_values),1), axis = 1)
-    result["rating"] = rate.item()
-    return result
+    locations = data["locations"]
+    results = []
+    # print("locations: ",locations)
+    for location in locations:
+        # id = location['id']
+        latitude = location["latitude"]
+        longtiude = location["longtiude"]
+        # print('predicting id: ',id)
+        result = extractData(CURRENT_FEATURES,latitude,longtiude)
+        result_float = []
+        for item in list(result.values()):
+            result_float.append(float(item))
+        test_values = torch.tensor([result_float])
+        rate = torch.argmax(torch.softmax((test_values),1), axis = 1)
+        result["rating"] = rate.item()
+        results.append(result)
+    return results
 
 def rate_prediction(datas):
         try:
