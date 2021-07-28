@@ -29,7 +29,7 @@ def rate():
         rate = torch.argmax(torch.softmax((test_values),1), axis = 1)
         result["id"] = id
         result["name"] = name
-        result["rating"] = rate.item()
+        result["rating"] = min(5,rate.item())
         results.append(result)
     return jsonify(results)
 
