@@ -1,44 +1,51 @@
 # app.py
 from flask import Flask, request, jsonify
+import torch
+import torch 
+import googlemaps
+from const import API_KEY,CURRENT_FEATURES
+from locationAnalize import extractData
+
+gmaps = googlemaps.Client(API_KEY)
 app = Flask(__name__)
 
-@app.route('/getmsg/', methods=['GET'])
-def respond():
-    # Retrieve the name from url parameter
-    name = request.args.get("name", None)
+@app.route('/rate/',methods=['GET','POST'])
+def rate():
+    data = request.get_json()
+    latitude = data["latitude"]
+    longtiude = data["longtiude"]
+    result = extractData(CURRENT_FEATURES,latitude,longtiude)
+    result_float = []
+    for item in list(result.values()):
+        result_float.append(float(item))
+    test_values = torch.tensor([result_float])
+    rate = torch.argmax(
+    torch.softmax((test_values),1), axis = 1)
+    result["rating"] = rate.item()
+    return result
 
-    # For debugging
-    print(f"got name {name}")
+def rate_prediction(datas):
+        try:
+            l = torch.load('tempmodel.h5')
+            test_values = torch.tensor([[15.0,41.0,85.0,70.0,36.0,30.0,15.0,20.0,16.0,40.0,20.0,15000,15000]])
+            result = torch.argmax(torch.softmax((test_values), 1), axis=1)
+            return jsonify({'the rating':(result.item())})
+        except:
+            return {'data': 'An Error Occurred during fetching Api'}
 
-    response = {}
 
-    # Check if user sent a name at all
-    if not name:
-        response["ERROR"] = "no name found, please send a name."
-    # Check if the user entered a number not a name
-    elif str(name).isdigit():
-        response["ERROR"] = "name can't be numeric."
-    # Now the user entered a valid name
-    else:
-        response["MESSAGE"] = f"Welcome {name} to our awesome platform!!"
-
-    # Return the response in json format
-    return jsonify(response)
-
-@app.route('/post/', methods=['POST'])
-def post_something():
-    param = request.form.get('name')
-    print(param)
+@app.route('/predict/', methods=['POST'])
+def predict():
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    
     # You can add the test cases you made in the previous function, but in our case here you are just testing the POST functionality
-    if param:
-        return jsonify({
-            "Message": f"Welcome {param} to our awesome platform!!",
-            # Add this option to distinct the POST request
-            "METHOD" : "POST"
-        })
+    if latitude and longitude:
+        return rate_prediction(latitude)
+
     else:
         return jsonify({
-            "ERROR": "no name found, please send a name."
+            "ERROR": "no latitude or longitude"
         })
 
 # A welcome message to test our server
