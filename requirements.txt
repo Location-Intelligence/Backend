@@ -1,5 +1,7 @@
--f https://download.pytorch.org/whl/torch_stable.html
-torch==1.8.1+cpu 
-flask-restful 
-flask
-Flask-Cors 
+Click==7.0
+Flask==1.1.1
+gunicorn==19.9.0
+itsdangerous==1.1.0
+Jinja2==2.10.1
+MarkupSafe==1.1.1
+Werkzeug==0.15.6
