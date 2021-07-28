@@ -5,9 +5,10 @@ import torch
 import googlemaps
 from const import API_KEY,CURRENT_FEATURES
 from locationAnalize import extractData
-
+from flask_cors import CORS
 gmaps = googlemaps.Client(API_KEY)
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/rate/',methods=['GET','POST'])
 def rate():
