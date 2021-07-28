@@ -80,7 +80,7 @@ def collectNearbyPlaces(current_features, latitude, longitude):
             df = df[df['permanently_closed']!=True]
         nearby_places[key] = df.shape[0]
     return nearby_places
-def importPopulationFile(location = 'Data/Population_per_subcity.json'):
+def importPopulationFile(location = 'Population_per_subcity.json'):
     script_dir = os.path.dirname("__file__")
     subcity_population_json = os.path.join(script_dir, location )
     subcity_population = open(subcity_population_json,)
