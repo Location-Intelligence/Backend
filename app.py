@@ -16,7 +16,8 @@ def rate():
     results = []
     # print("locations: ",locations)
     for location in locations:
-        # id = location['id']
+        id = location['id']
+        name = location['name']
         latitude = location["latitude"]
         longtiude = location["longtiude"]
         # print('predicting id: ',id)
@@ -26,9 +27,11 @@ def rate():
             result_float.append(float(item))
         test_values = torch.tensor([result_float])
         rate = torch.argmax(torch.softmax((test_values),1), axis = 1)
+        result["id"] = id
+        result["name"] = name
         result["rating"] = rate.item()
         results.append(result)
-    return results
+    return jsonify(results)
 
 def rate_prediction(datas):
         try:
