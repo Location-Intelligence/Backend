@@ -7,7 +7,7 @@ import json
 import os
 import time
 from const import API_KEY
-gmaps = googlemaps.Client(API_KEY)
+# gmaps = googlemaps.Client(API_KEY)
 def cleanData(data_list):
     # Inner Functions for dataframe cleaning
     def lat(row):
