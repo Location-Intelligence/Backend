@@ -1,8 +1,6 @@
 # app.py
 from flask import Flask, request, jsonify
 import torch
-import torch 
-import googlemaps
 from const import API_KEY,CURRENT_FEATURES
 from locationAnalize import extractData
 from flask_cors import CORS
