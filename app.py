@@ -12,7 +12,7 @@ CORS(app)
 
 @app.route('/rate/',methods=['GET','POST'])
 def rate():
-     data = [{'Females': 0,
+  data = [{'Females': 0,
   'Males': 0,
   'atm': 0,
   'bank': 0,
@@ -50,8 +50,9 @@ def rate():
   "name":"urael",
     "latitude":8.992021586554754,
     "longtiude":38.72606647576475}]
-    return jsonify(data)
-   /** data = request.get_json()
+  return jsonify(data)
+
+  ''' data = request.get_json()
     locations = data["locations"]
     results = []
     # print("locations: ",locations)
@@ -72,7 +73,7 @@ def rate():
         result["rating"] = min(5,rate.item())
         results.append(result)
     return jsonify(results)
-**/
+'''
 def rate_prediction(datas):
         try:
             l = torch.load('tempmodel.h5')
