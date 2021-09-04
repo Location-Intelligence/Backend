@@ -1,2 +1,2 @@
-API_KEY = 'AIzaSyA8qHwF1krHNFP0N8A4gZEnyLLSvO9iPcw'
+API_KEY = 'AIzaSyCjkI-TzN9giph0DnS1fFF1liDo9HbyQU0'
 CURRENT_FEATURES = ['atm','bank','bus_station','church','gas_station','hospital','mosque','pharmacy','restaurant','school','train_station']
