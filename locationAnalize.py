@@ -23,10 +23,8 @@ def cleanData(option, data_list):
 
     df = pd.DataFrame(data_list)    
     if len(data_list)>0:
-        cleaned_df = df[ df.columns & ['name', 'photos', 'place_id', 'rating', 'geometry']]    
+        cleaned_df = df[ df.columns & ['name', 'place_id', 'rating', 'geometry']]    
         print(cleaned_df.columns)
-        if option!='supermarket' and option!='shopping_mall':
-            cleaned_df.drop(['photos'], axis=1, errors='ignore', inplace=True)
         cleaned_df['latitude'] = cleaned_df['geometry'].apply(lat)
         cleaned_df['longitude'] = cleaned_df['geometry'].apply(lng)
         cleaned_df = cleaned_df.drop(['geometry'],axis=1, errors='ignore')
@@ -100,8 +98,7 @@ def nearestSupermarkets(lat, lon, dataframe, count):
             'name': i.name,
             'latitude': i.latitude,
             'longitude': i.longitude,
-            'google_rating': i.rating,
-            'photos': i.photos if 'photos' in i else [],
+            'google_rating': i.rating
         }))
     return [i[1] for i in heapq.nsmallest(count, nearest)]
 
