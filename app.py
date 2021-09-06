@@ -6,9 +6,12 @@ import torch
 import googlemaps
 from const import API_KEY,CURRENT_FEATURES
 from locationAnalize import extractData
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 gmaps = googlemaps.Client(API_KEY)
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+model = torch.load('tempmodel.h5')
+
 CORS(app)
 
 @app.route('/rate/',methods=['GET','POST'])
@@ -71,7 +74,5 @@ def index():
     return "<h1>Welcome to our server !!</h1>"
 
 if __name__ == '__main__':
-    global model
-    model = torch.load('tempmodel.h5')
     # Threaded option to enable multiple instances for multiple user access support
     app.run(threaded=True, port=5000)
