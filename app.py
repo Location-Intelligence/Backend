@@ -48,43 +48,44 @@ location_details:Collection = pymong.db.location_details
 
 @app.route('/rate/',methods=['GET','POST'])
 def rate():
-    
-    try:
-        data = request.get_json()
-        locations = data["locations"]
-        results = []
-        # print("locations: ",locations)
-        for i,location in enumerate(locations):
-            id = location['id']
-            name = location['name']
-            latitude = location["latitude"]
-            longitude = location["longitude"]
-            location_data = find_location_by_grid(latitude,longitude)
-            if location_data!=None:
-                results.append(location_data)
-            else:
-                result,supermarkets = extractData(CURRENT_FEATURES,latitude,longitude)
-                result_float = []
-                for i in FEATURE_ORDER:
-                    if i=='competitors': continue
-                    result_float.append(float(result[i]))
-                test_values = torch.tensor([result_float])
-                rate = torch.argmax(torch.softmax(model(test_values),1), axis = 1)
-                result["id"] = id
-                result["name"] = name
-                result["rating"] = min(5,rate.item())
-                result['nearest'] = supermarkets
-                result["latitude"] =latitude
-                result["longitude"] = longitude
-                tup = convert_to_grid(latitude,longitude)
-                result["latitude_grid"] = tup[0]
-                result["longitude_grid"] = tup[1]
-                results.append(result)
-                add_new_location(results[i])
-        return jsonify(results)
-    except Exception as ex:
-        print(ex)
-        return {'Error': 'An unexpected error occurred'}
+    data = request.get_json()
+    locations = data["locations"]
+    results = []
+    new_results = []
+    # print("locations: ",locations)
+    for i,location in enumerate(locations):
+        id = location['id']
+        name = location['name']
+        latitude = location["latitude"]
+        longitude = location["longitude"]
+        location_data = find_location_by_grid(latitude,longitude)
+        if location_data!=None:
+            results.append(location_data)
+        else:
+            result,supermarkets = extractData(CURRENT_FEATURES,latitude,longitude)
+            result_float = []
+            for i in FEATURE_ORDER:
+                if i=='competitors': continue
+                result_float.append(float(result[i]))
+            test_values = torch.tensor([result_float])
+            rate = torch.argmax(torch.softmax(model(test_values),1), axis = 1)
+            result["id"] = id
+            result["name"] = name
+            result["rating"] = min(5,rate.item())
+            result['nearest'] = supermarkets
+            result["latitude"] =latitude
+            result["longitude"] = longitude
+            tup = convert_to_grid(latitude,longitude)
+            result["latitude_grid"] = tup[0]
+            result["longitude_grid"] = tup[1]
+            new_results.append(result)
+            for i in new_results:
+                add_new_location(i)
+                results.append(i)
+    return jsonify(results)
+    # except Exception as ex:
+    #     print(ex)
+    #     return {'Error': 'An unexpected error occurred'}
 def rate_prediction(datas):
         try:
             test_values = torch.tensor([[15.0,41.0,85.0,70.0,36.0,30.0,15.0,20.0,16.0,40.0,20.0,15000,15000]])

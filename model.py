@@ -14,6 +14,7 @@ class Location(BaseModel):
     hospital:float
     mosque :float
     name :str
+    nearest:list
     pharmacy : float
     rating : float
     restaurant: float
