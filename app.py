@@ -26,10 +26,6 @@ app.config['DEBUG'] = True
 app.config['MONGO_URI'] =DB_URI
 
 
-
-
-
-
 class MyEncoder(json.JSONEncoder):
 
     def default(self, obj):
@@ -77,7 +73,7 @@ def rate():
             tup = convert_to_grid(latitude,longitude)
             result["latitude_grid"] = tup[0]
             result["longitude_grid"] = tup[1]
-            add_new_location(location)
+            add_new_location(result)
             results.append(result)
     console.log(results)
     return jsonify(results)
