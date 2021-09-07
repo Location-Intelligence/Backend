@@ -51,7 +51,6 @@ def rate():
     data = request.get_json()
     locations = data["locations"]
     results = []
-    new_results = []
     # print("locations: ",locations)
     for i,location in enumerate(locations):
         id = location['id']
@@ -78,10 +77,8 @@ def rate():
             tup = convert_to_grid(latitude,longitude)
             result["latitude_grid"] = tup[0]
             result["longitude_grid"] = tup[1]
-            new_results.append(result)
-            for i in new_results:
-                add_new_location(i)
-                results.append(i)
+            add_new_location(location)
+            results.append(result)
     return jsonify(results)
     # except Exception as ex:
     #     print(ex)
