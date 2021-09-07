@@ -79,6 +79,7 @@ def rate():
             result["longitude_grid"] = tup[1]
             add_new_location(location)
             results.append(result)
+    console.log(results)
     return jsonify(results)
     # except Exception as ex:
     #     print(ex)
