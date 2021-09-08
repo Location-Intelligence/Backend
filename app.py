@@ -53,29 +53,29 @@ def rate():
         name = location['name']
         latitude = location["latitude"]
         longitude = location["longitude"]
-        location_data = find_location_by_grid(latitude,longitude)
-        if location_data!=None:
-            results.append(location_data)
-        else:
-            result,supermarkets = extractData(CURRENT_FEATURES,latitude,longitude)
-            result_float = []
-            for i in FEATURE_ORDER:
-                if i=='competitors': continue
-                result_float.append(float(result[i]))
-            test_values = torch.tensor([result_float])
-            rate = torch.argmax(torch.softmax(model(test_values),1), axis = 1)
-            result["id"] = id
-            result["name"] = name
-            result["rating"] = min(5,rate.item())
-            result['nearest'] = supermarkets
-            result["latitude"] =latitude
-            result["longitude"] = longitude
-            tup = convert_to_grid(latitude,longitude)
-            result["latitude_grid"] = tup[0]
-            result["longitude_grid"] = tup[1]
-            add_new_location(result)
-            results.append(result)
-    print(results)
+#         location_data = find_location_by_grid(latitude,longitude)
+#         if location_data!=None:
+#             results.append(location_data)
+#         else:
+        result,supermarkets = extractData(CURRENT_FEATURES,latitude,longitude)
+        result_float = []
+        for i in FEATURE_ORDER:
+            if i=='competitors': continue
+            result_float.append(float(result[i]))
+        test_values = torch.tensor([result_float])
+        rate = torch.argmax(torch.softmax(model(test_values),1), axis = 1)
+        result["id"] = id
+        result["name"] = name
+        result["rating"] = min(5,rate.item())
+        result['nearest'] = supermarkets
+        result["latitude"] =latitude
+        result["longitude"] = longitude
+        tup = convert_to_grid(latitude,longitude)
+        result["latitude_grid"] = tup[0]
+        result["longitude_grid"] = tup[1]
+        add_new_location(result)
+        results.append(result)
+#     print(results)
     return jsonify(results)
     # except Exception as ex:
     #     print(ex)
