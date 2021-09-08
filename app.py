@@ -2,7 +2,7 @@
 
 from os import fsync
 from typing import Collection
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response, json
 
 from model import Location
 from objectid import PydanticObjectId
@@ -10,7 +10,6 @@ from flask_pymongo import PyMongo
 from gridTranslation import convert_to_grid
 from const import API_KEY,CURRENT_FEATURES,DB_URI,FEATURE_ORDER
 from bson.json_util import ObjectId
-import json
 import torch 
 import googlemaps
 from locationAnalize import extractData
@@ -54,29 +53,29 @@ def rate():
         latitude = location["latitude"]
         longitude = location["longitude"]
         location_data = find_location_by_grid(latitude,longitude)
-        if location_data!=None:
-            results.append(location_data)
-        else:
-            result,supermarkets = extractData(CURRENT_FEATURES,latitude,longitude)
-            result_float = []
-            for i in FEATURE_ORDER:
-                if i=='competitors': continue
-                result_float.append(float(result[i]))
-            test_values = torch.tensor([result_float])
-            rate = torch.argmax(torch.softmax(model(test_values),1), axis = 1)
-            result["id"] = id_
-            result["name"] = name
-            result["rating"] = min(5,rate.item())
-            result['nearest'] = supermarkets
-            result["latitude"] =latitude
-            result["longitude"] = longitude
-            tup = convert_to_grid(latitude,longitude)
-            result["latitude_grid"] = tup[0]
-            result["longitude_grid"] = tup[1]
-            add_new_location(result)
-            results.append(result)
+        # if location_data!=None:
+        #     results.append(location_data)
+        # else:
+        result,supermarkets = extractData(CURRENT_FEATURES,latitude,longitude)
+        result_float = []
+        for i in FEATURE_ORDER:
+            if i=='competitors': continue
+            result_float.append(float(result[i]))
+        test_values = torch.tensor([result_float])
+        rate = torch.argmax(torch.softmax(model(test_values),1), axis = 1)
+        result["id"] = id_
+        result["name"] = name
+        result["rating"] = min(5,rate.item())
+        # result['nearest'] = supermarkets
+        result["latitude"] =latitude
+        result["longitude"] = longitude
+        tup = convert_to_grid(latitude,longitude)
+        result["latitude_grid"] = tup[0]
+        result["longitude_grid"] = tup[1]
+        # add_new_location(result)
+        results.append(result)
     print(type(results), results)
-    return results
+    return Response(json.dumps(results),  mimetype='application/json')
     # except Exception as ex:
     #     print(ex)
     #     return {'Error': 'An unexpected error occurred'}
