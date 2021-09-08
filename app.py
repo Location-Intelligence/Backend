@@ -66,7 +66,7 @@ def rate():
         result["id"] = id_
         result["name"] = name
         result["rating"] = min(5,rate.item())
-        # result['nearest'] = supermarkets
+        result['nearest'] = supermarkets
         result["latitude"] =latitude
         result["longitude"] = longitude
         tup = convert_to_grid(latitude,longitude)
