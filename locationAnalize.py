@@ -95,10 +95,10 @@ def nearestSupermarkets(lat, lon, dataframe, count):
     if len(dataframe)==0: return nearest
     for i in dataframe.itertuples(index=True, name='Pandas'):
         heapq.heappush(nearest, (calculateDistance(lat, lon, i.latitude, i.longitude), {
-            'name': i.name.replace("'", "\'"),
+            'name': i.name.replace("'", "\'").split('|')[0],
             'latitude': i.latitude,
             'longitude': i.longitude,
-            'google_rating': i.rating
+            'google_rating': i.rating if i.rating else 'NaN'
         }))
     return [i[1] for i in heapq.nsmallest(count, nearest)]
 
