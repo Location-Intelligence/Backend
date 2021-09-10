@@ -1,5 +1,5 @@
 import unittest
-
+import requests
 class UnitTestCase(unittest.TestCase):
     test_data_for_one_location = {
         "locations":
