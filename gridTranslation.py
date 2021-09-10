@@ -1,4 +1,5 @@
 import math
+from re import T
 
 def latitude_grid(latitude, 
     latitude_start = 8.834616884187174, 
@@ -25,4 +26,5 @@ def convert_to_grid(latitude, longitude):
     return latitude_grid(latitude), longitude_grid(longitude,latitude)
 bottom_left_corner = [8.834616884187174, 38.659962967829706]
 tup = convert_to_grid(bottom_left_corner[0], bottom_left_corner[1])
-print(tup[0])
+t1 = latitude_grid(bottom_left_corner[0])
+t2 = longitude_grid(bottom_left_corner[1],bottom_left_corner[0])
