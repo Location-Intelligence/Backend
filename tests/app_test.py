@@ -1,4 +1,3 @@
-
 import unittest
 
 class UnitTestCase(unittest.TestCase):
@@ -194,4 +193,3 @@ class UnitTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
