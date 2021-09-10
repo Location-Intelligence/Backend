@@ -186,10 +186,19 @@ class UnitTestCase(unittest.TestCase):
 
 
     def test_url(self):
+        resp = requests.get(self.URL)
+        self.assertEqual(resp.status_code,400)
         print("test one passed")
-    def test_rate_withone_location(self):
-
-        print("test rate with one location passed")
+    def test_one_location(self):
+        resp = requests.post(self.URL + '/rate/',json = self.test_data_for_one_location)
+        self.assertEqual(resp.status_code,200)
+        self.assertEqual(resp.json(),self.exceptedresult)
+        print("test by one location passed")
+    def test_multiple_location(self):
+        resp = requests.post(self.URL + '/rate/',json = self.test_data_for_multiple_location)
+        self.assertEqual(resp.status_code,200)
+        self.assertEqual(resp.json(),self.expected_result_for_multiple_locations)
+        print("test by multiple location passed")
 
 if __name__ == '__main__':
     unittest.main()
