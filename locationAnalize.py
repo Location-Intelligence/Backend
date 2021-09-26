@@ -24,15 +24,15 @@ def cleanData(option, data_list):
     df = pd.DataFrame(data_list)    
     if len(data_list)>0:
         cleaned_df = df[ df.columns & ['name', 'place_id', 'rating', 'geometry']]    
-        print(cleaned_df.columns)
+        # print('0: ',cleaned_df.columns)
         cleaned_df['latitude'] = cleaned_df['geometry'].apply(lat)
         cleaned_df['longitude'] = cleaned_df['geometry'].apply(lng)
         cleaned_df = cleaned_df.drop(['geometry'],axis=1, errors='ignore')
-        print('Before dropping duplicates, the size was,',len(cleaned_df))
+        # print('Before dropping duplicates, the size was,',len(cleaned_df))
         cleaned_df.sort_values("place_id", inplace=True)
-        print(cleaned_df.columns)
+        # print('1: ',cleaned_df.columns)
         cleaned_df.drop_duplicates(subset=['place_id'], ignore_index=True, inplace=True)
-        print('After dropping duplicates, the size was,',len(cleaned_df))
+        # print('After dropping duplicates, the size was,',len(cleaned_df))
         return cleaned_df
     else:
         return df
@@ -135,24 +135,46 @@ def importPopulationFile(location = 'Population_per_subcity.json'):
     return subcity_population_data
 
 # Based on coordinate determine the poplation per gender 
+# def determineSubcityAndAddPopulation(latitude, longitude):
+#     subcity_population_data = importPopulationFile()
+
+#     for subcity in subcity_population_data:
+#         point = Point(latitude,longitude)
+#         polygon = Polygon([(i,j) for i, j in subcity_population_data[subcity]['coordinates']])
+#         if polygon.contains(point):
+#             total_males = total_females = 0
+#             for age in subcity_population_data[subcity]['population']:
+#               total_males += subcity_population_data[subcity]['population'][age]['Males']  
+#               total_females += subcity_population_data[subcity]['population'][age]['Females']  
+#             return [total_males, total_females]
+#     return [0,0]
 def determineSubcityAndAddPopulation(latitude, longitude):
     subcity_population_data = importPopulationFile()
-
     for subcity in subcity_population_data:
-        point = Point(latitude,longitude)
+        point = Point(latitude, longitude)
         polygon = Polygon([(i,j) for i, j in subcity_population_data[subcity]['coordinates']])
         if polygon.contains(point):
+            total_children = total_working = total_elderly = 0
             total_males = total_females = 0
             for age in subcity_population_data[subcity]['population']:
-              total_males += subcity_population_data[subcity]['population'][age]['Males']  
-              total_females += subcity_population_data[subcity]['population'][age]['Females']  
-            return [total_males, total_females]
-    return [0,0]
-
+                if age=="0 - 4" or age=="5 - 9" or age=="10-14":
+                    total_children += subcity_population_data[subcity]['population'][age]['Total']
+                elif age=="65-69" or age=="70-74" or age=="75-79" or age=="80-84" or age=='85-89' or age=="90-94" or age=="95+":
+                    total_elderly += subcity_population_data[subcity]['population'][age]['Total'] 
+                else:
+                    total_working += subcity_population_data[subcity]['population'][age]['Total'] 
+                total_males += subcity_population_data[subcity]['population'][age]['Males'] 
+                total_females += subcity_population_data[subcity]['population'][age]['Females']
+            return [total_males, total_females, total_children, total_working, total_elderly] 
+    return [0,0,0,0,0] 
 # Main function to extract places and population count
 def extractData(current_features, latitude, longitude):
     nearby_places, supermarkets = collectNearbyPlaces(current_features, latitude, longitude)
-    males, females = determineSubcityAndAddPopulation(latitude, longitude)
-    nearby_places['Males'] = males
-    nearby_places['Females'] = females
+    total_males, total_females, total_children, total_working, total_elderly = determineSubcityAndAddPopulation(latitude, longitude)	
+    nearby_places['Males'] = total_males
+    nearby_places['Females'] = total_females
+    nearby_places['Children'] = total_children
+    nearby_places['Working'] = total_working
+    nearby_places['Elderly'] = total_elderly
+
     return nearby_places, supermarkets
